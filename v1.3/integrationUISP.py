@@ -165,6 +165,16 @@ def createNetworkJSON():
 		with open('network.json', 'w') as f:
 			json.dump(tree, f, indent=4)
 
+def isDeviceRoleValid(role) -> bool:
+	# Is a deviceRole relevant to shaping?
+	match role:
+		case "router": return True
+		case "station": return True
+		case "wireless": return True
+		case "other": return True
+	#print("Not shaping device role: " + role)
+	return False
+
 def createShaper():
 	print("Creating ShapedDevices.csv")
 	devicesToImport = []
@@ -222,7 +232,7 @@ def createShaper():
 								deviceMAC = device['identification']['mac'].upper()
 							else:
 								deviceMAC = ''
-							if (deviceRole == 'router') or (deviceModel in knownRouterModels):
+							if isDeviceRoleValid(deviceRole) or (deviceModel in knownRouterModels):
 								ipv4 = device['ipAddress']
 								if '/' in ipv4:
 									ipv4 = ipv4.split("/")[0]
