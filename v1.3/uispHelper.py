@@ -23,6 +23,9 @@ def isInIgnoredSubnets(inputIP):
 			isIgnored = True
 	return isIgnored
 
+def isIpv4Allowed(inputIp):
+    return isInIgnoredSubnets(inputIp)==False and isInAllowedSubnets(inputIp)
+
 def fixSubnet(inputIP):
     # If an IP address has a CIDR other than /32 (e.g. 192.168.1.1/24), 
     # but doesn't appear as a network address (e.g. 192.168.1.0/24)

@@ -4,7 +4,7 @@ import csv
 import ipaddress
 
 from ispConfig import UISPbaseURL, uispAuthToken, allowedSubnets, ignoreSubnets, excludeSites, findIPv6usingMikrotik, bandwidthOverheadFactor, exceptionCPEs, uispStrategy
-from uispHelper import getClientSiteList, buildCircuits
+from uispHelper import getClientSiteList, buildCircuits, isIpv4Allowed
 import shutil
 import json
 if findIPv6usingMikrotik == True:
@@ -13,15 +13,6 @@ if findIPv6usingMikrotik == True:
 knownRouterModels = ['ACB-AC', 'ACB-ISP']
 knownAPmodels = ['LTU-Rocket', 'RP-5AC', 'RP-5AC-Gen2', 'LAP-GPS', 'Wave-AP']
 
-def isInAllowedSubnets(inputIP):
-	isAllowed = False
-	if '/' in inputIP:
-		inputIP = inputIP.split('/')[0]
-	for subnet in allowedSubnets:
-		if (ipaddress.ip_address(inputIP) in ipaddress.ip_network(subnet)):
-			isAllowed = True
-	return isAllowed
-	
 def createTree(sites,accessPoints,bandwidthDL,bandwidthUL,siteParentDict,siteIDtoName,sitesWithParents,currentNode):
 	currentNodeName = list(currentNode.items())[0][0]
 	childrenList = []
@@ -241,7 +232,7 @@ def createShaper():
 								ipv6 = ''
 								if ipv4 in ipv4ToIPv6.keys():
 									ipv6 = ipv4ToIPv6[ipv4]
-								if isInAllowedSubnets(ipv4):
+								if isIpv4Allowed(ipv4):
 									deviceModel = device['identification']['model']
 									deviceModelName = device['identification']['modelName']
 									maxSpeedDown = round(bandwidthOverheadFactor*downloadSpeedMbps)
