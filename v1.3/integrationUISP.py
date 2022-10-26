@@ -2,7 +2,9 @@ import requests
 import os
 import csv
 import ipaddress
-from ispConfig import UISPbaseURL, uispAuthToken, allowedSubnets, ignoreSubnets, excludeSites, findIPv6usingMikrotik, bandwidthOverheadFactor, exceptionCPEs
+
+from ispConfig import UISPbaseURL, uispAuthToken, allowedSubnets, ignoreSubnets, excludeSites, findIPv6usingMikrotik, bandwidthOverheadFactor, exceptionCPEs, uispStrategy
+from uispHelper import getClientSiteList, buildCircuits
 import shutil
 import json
 if findIPv6usingMikrotik == True:
@@ -267,9 +269,32 @@ def createShaper():
 		for device in devicesToImport:
 			wr.writerow(device)
 
+
+
+def createFlatNetwork():
+	print("Fetching data from UISP")
+	clientSites = getClientSiteList()
+	print("Found " + str(len(clientSites)) + " client sites.")
+	circuits = buildCircuits(clientSites)
+	for c in circuits:
+		c.summary()
+	
+	# Write a simple shapedDevices list
+	with open('ShapedDevices.csv', 'w') as csvfile:
+		wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+		wr.writerow(['Circuit ID', 'Circuit Name', 'Device ID', 'Device Name', 'Parent Node', 'MAC', 'IPv4', 'IPv6', 'Download Min', 'Upload Min', 'Download Max', 'Upload Max', 'Comment'])
+		for circuit in circuits:
+			wr.writerow(circuit.asArray())
+	
+	# Network.json?
+
 def importFromUISP():
-	createNetworkJSON()
-	createShaper()
+	# Entry point
+	if uispStrategy == "flat":
+		createFlatNetwork()
+	else:
+		createNetworkJSON()
+		createShaper()
 
 if __name__ == '__main__':
 	importFromUISP()

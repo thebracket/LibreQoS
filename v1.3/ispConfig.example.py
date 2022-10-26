@@ -63,6 +63,16 @@ splynx_api_url = 'https://YOUR_URL.splynx.app'
 # UISP integration
 automaticImportUISP = False
 uispAuthToken = ''
+# Strategy:
+# * "flat" - create all client sites directly off the top of the tree,
+#   provides maximum performance - at the expense of not offering AP,
+#   or site options.
+uispStrategy = "flat"
+# Suspended speed: override speed for suspended customers
+uispSuspendedDownloadMbps = 1
+uispSuspendedUploadMbps = 1
+# Name circuits by address or UISP site ID
+uispCircuitNaming = "address"
 # Everything before /nms/ on your UISP instance
 UISPbaseURL = 'https://examplesite.com'
 # List any sites that should not be included, with each site name surrounded by '' and seperated by commas
