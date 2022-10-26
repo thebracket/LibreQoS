@@ -59,7 +59,7 @@ class Device:
         for interface in device["interfaces"]:
             for ip in interface["addresses"]:
                 ip = ip["cidr"]
-                if isInIgnoredSubnets(ip)==False and isInAllowedSubnets(ip):
+                if isIpv4Allowed(ip):
                     self.ipAddresses.append(fixSubnet(ip))
 
     def containsUsefulData(self):
